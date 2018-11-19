@@ -4,21 +4,21 @@ from stats.stats import Statistic
 
 
 class Banner(metaclass=abc.ABCMeta):
-    @abc.abstractmethod
-    def get_json_fields(self):
-        pass
-
     def __init__(self, user_id, data, campaign_id):
         self.user_id = user_id
         self.data = data
         self.campaign_id = campaign_id
 
-    def get_id(self):
-        return id(self)
+    @abc.abstractmethod
+    def get_json_fields(self):
+        pass
 
     def get_json(self):
         common_json = {'id': self.get_id()}
         return {**common_json, **self.get_json_fields()}
+
+    def get_id(self):
+        return id(self)
 
     def get_show_count(self):
         s = Statistic()
@@ -52,6 +52,4 @@ class BannerFactory:
         elif t == self.TYPE_IMAGE:
             return BannerImage(user_id, data, campaign_id)
         else:
-            raise ValueError('Banner type is not correct')
-
-
+            raise TypeError('Banner type is not correct')
