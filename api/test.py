@@ -1,7 +1,7 @@
 import time
 import pytest
 from banner.model import BannerFactory
-from banner.proxy import CachedProxy, AuthProxy
+from banner.proxy import CachedProxy, AuthProxy, Request
 from banner.storage import Repository
 from user.model import User
 
@@ -14,7 +14,7 @@ class TestBannerAPI:
         self.auth = AuthProxy()
 
     def test_repository(self):
-        self.user.create_position('https://google.com')
+        self.user.create_position(Request.TEST_SITE)
         self.user.create_banner(BannerFactory.TYPE_IMAGE, 'https://www.static.com/webp/gallery/1.jpg')
         self.user.positions[0].assign_banner(self.user.banners[0])
         position1_hash = self.user.positions[0].get_hash()
@@ -29,7 +29,7 @@ class TestBannerAPI:
             self.auth.get_banners_by_position_hash(position1_hash)
 
     def test_cache_proxy(self):
-        self.user.create_position('https://google.com')
+        self.user.create_position(Request.TEST_SITE)
         self.user.create_banner(BannerFactory.TYPE_IMAGE, 'https://www.static.com/webp/gallery/1.jpg')
         self.user.positions[0].assign_banner(self.user.banners[0])
         position1_hash = self.user.positions[0].get_hash()
@@ -53,7 +53,7 @@ class TestUserAPI:
         assert self.user.campaigns[0].name == 'Test Campaign'
 
     def test_create_position(self):
-        self.user.create_position('https://google.com')
+        self.user.create_position(Request.TEST_SITE)
         assert self.user.positions[0].generate_widget_script().startswith('<script>')
         assert self.user.positions[0].generate_widget_label().startswith('<div')
 
@@ -69,7 +69,7 @@ class TestUserAPI:
         assert self.user.banners[0].get_json()['image_url'] == 'https://www.gstatic.com/webp/gallery/1.jpg'
 
     def test_assign_banner(self):
-        self.user.create_position('https://google.com')
+        self.user.create_position(Request.TEST_SITE)
         self.user.create_banner(BannerFactory.TYPE_IMAGE, 'https://www.static.com/webp/gallery/1.jpg')
         self.user.positions[0].assign_banner(self.user.banners[0])
         assert self.user.positions[0].banners[0].get_json()['image_url'].startswith('https://www.static')
