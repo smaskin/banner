@@ -1,4 +1,4 @@
-from banner.model import BannerFactory
+from banner.model import Banner
 from user.campaign import Campaign
 from user.position import Position
 
@@ -6,7 +6,8 @@ from user.position import Position
 class User:
     def __init__(self, name):
         self.name = name
-        self._default_campaign = Campaign(self, 'Default campaign for {}'.format(name))
+        self.default_campaign = Campaign(self, 'Default campaign for {}'.format(name))
+        self.default_region = '*'
 
         self.banners = []
         self.positions = []
@@ -16,8 +17,7 @@ class User:
         return id(self)
 
     def create_banner(self, t, data, campaign_id=None):
-        factory = BannerFactory()
-        banner = factory.create(self.get_id(), t, data, campaign_id if campaign_id else self._default_campaign.get_id())
+        banner = Banner.create(self, t, data, campaign_id if campaign_id else self.default_campaign)
         self.banners.append(banner)
         return banner.save()
 
@@ -33,9 +33,12 @@ class User:
         pass
 
     def create_campaign(self, name: str):
-        campaign = Campaign(self.get_id(), name)
+        campaign = Campaign(self, name)
         self.campaigns.append(campaign)
         return campaign.save()
 
     def delete_campaign(self, id):
         pass
+
+    def info(self, msg):
+        print('Hi {}, message for you: {}'.format(self, msg))

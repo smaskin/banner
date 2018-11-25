@@ -1,6 +1,6 @@
 class Campaign:
-    def __init__(self, user_id, name):
-        self.user_id = user_id
+    def __init__(self, user, name):
+        self.user_id = user.get_id()
         self.name = name
 
     def get_id(self):

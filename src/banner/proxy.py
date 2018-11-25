@@ -1,12 +1,7 @@
 import abc
+
+from api.request import Request
 from banner.storage import Repository, Cache
-
-
-class Request:
-    TEST_SITE = 'https://google.com'
-
-    def get_reference(self):
-        return self.TEST_SITE
 
 
 class BannerProxy(metaclass=abc.ABCMeta):
@@ -22,7 +17,7 @@ class AuthProxy(BannerProxy):
 
     def get_banners_by_position_hash(self, _hash):
         position = self.cacheProxy.get_position_by_hash(_hash)
-        if self.request.get_reference() != position.site:
+        if self.request.reference != position.site:
             raise PermissionError()
         return self.cacheProxy.get_banners_by_position_hash(_hash)
 
