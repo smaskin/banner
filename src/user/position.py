@@ -1,20 +1,28 @@
-from banner.storage import Repository
+import sqlite3
 
 
 class Position:
-    def __init__(self, user_id, site):
+    def __init__(self, user_id, site, _id=None):
+        from banner.mapper import BannerMapper, PositionMapper
         self.user_id = user_id
         self.site = site
         self.banners = []
+        connection = sqlite3.connect('db/sqlite.db')
+        self.banner_mapper = BannerMapper(connection)
+        self.position_mapper = PositionMapper(connection)
+        self.id = _id
 
     def get_id(self):
-        return id(self)
+        return self.id
 
     def get_hash(self):
         return hash(self.get_id)
 
     def assign_banner(self, banner):
-        self.banners.append(banner)
+        self.banner_mapper.assign(self, banner)
+
+    def get_banners(self):
+        self.banner_mapper.find_by_position(self)
 
     def deassign_banners(self, position, banner):
         pass
@@ -26,5 +34,4 @@ class Position:
         return '<div data-banner-label="{}"></div>'.format(self.get_hash())
 
     def save(self):
-        repository = Repository()
-        repository.insert(Repository.TYPE_POSITION, self)
+        self.id = self.position_mapper.insert(self)

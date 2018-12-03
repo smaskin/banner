@@ -1,7 +1,9 @@
 import abc
 import datetime
+import sqlite3
 
 from banner.state import PublishedStatus
+from banner.mapper import BannerMapper, UserMapper
 from stats.storage import Statistic
 
 
@@ -10,6 +12,11 @@ class Banner(metaclass=abc.ABCMeta):
     TYPE_HTML = 2
 
     def __init__(self, user, data, campaign):
+        connection = sqlite3.connect('db/sqlite.db')
+        self.banner_mapper = BannerMapper(connection)
+        if type(user) is int:
+            user_mapper = UserMapper(connection)
+            user = user_mapper.get(user)
         self.data = data
         self.campaign = campaign
         self.regions = [user.default_region]
@@ -23,13 +30,14 @@ class Banner(metaclass=abc.ABCMeta):
 
         self.user = user
         self.status = PublishedStatus(self)
+        self.id = None
 
     @abc.abstractmethod
     def get_json_fields(self):
         pass
 
     @classmethod
-    def create(cls, user, t, data, campaign):
+    def create(cls, user, t, data, campaign=None):
         if t == cls.TYPE_HTML:
             return BannerHtml(user, data, campaign)
         elif t == cls.TYPE_IMAGE:
@@ -38,7 +46,7 @@ class Banner(metaclass=abc.ABCMeta):
             raise TypeError('Banner type is not correct')
 
     def get_id(self):
-        return id(self)
+        return self.id
 
     def change_status(self, status):
         self.status = status
@@ -67,7 +75,7 @@ class Banner(metaclass=abc.ABCMeta):
         return {**common_json, **self.get_json_fields()}
 
     def save(self):
-        pass
+        self.id = self.banner_mapper.insert(self)
 
 
 class BannerHtml(Banner):

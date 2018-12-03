@@ -1,0 +1,23 @@
+CREATE TABLE user
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    name varchar
+);
+CREATE TABLE banner
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    data varchar
+);
+CREATE TABLE banner_position
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    position_id int NOT NULL,
+    banner_id int NOT NULL
+);
+CREATE TABLE position
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    hash varchar NOT NULL,
+    user_id int,
+    site varchar
+);

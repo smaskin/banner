@@ -12,6 +12,7 @@ from user.model import User
 class TestBannerAPI:
     def setup(self):
         self.user = User('Test User')
+        self.user.save()
         self.repository = Repository()
         self.proxy = CachedProxy()
         self.auth = AuthProxy()
@@ -47,6 +48,7 @@ class TestBannerAPI:
 class TestUserAPI:
     def setup(self):
         self.user = User('Test User')
+        self.user.save()
 
     def test_create_user(self):
         assert self.user.name == 'Test User'

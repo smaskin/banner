@@ -1,4 +1,6 @@
+import sqlite3
 import time
+from banner.mapper import PositionMapper
 
 
 class Singleton(type):
@@ -17,20 +19,15 @@ class Repository(metaclass=Singleton):
     TIMEOUT_FOR_TEST = .1
 
     def __init__(self):
-        self.positions = {}
-
-    def insert(self, t, model):
-        if t == self.TYPE_POSITION:
-            self.positions.update({model.get_hash(): model})
-        else:
-            raise TypeError('Model type is not correct')
+        connection = sqlite3.connect('db/sqlite.db')
+        self.position_mapper = PositionMapper(connection)
 
     def get_banners_by_position_hash(self, _hash):
         time.sleep(self.TIMEOUT_FOR_TEST)
-        return self.get_position_by_hash(_hash).banners
+        return self.get_position_by_hash(_hash).get_banners()
 
     def get_position_by_hash(self, _hash):
-        return self.positions.get(_hash)
+        return self.position_mapper.get(_hash)
 
 
 class Cache(metaclass=Singleton):
