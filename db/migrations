@@ -6,18 +6,32 @@ CREATE TABLE user
 CREATE TABLE banner
 (
     id integer PRIMARY KEY AUTOINCREMENT,
-    data varchar
+    user_id int,
+    campaign_id int,
+    data varchar,
+    regions varchar,
+    start int,
+    finish int,
+    show_limit int,
+    click_limit int,
+    allowed int
 );
 CREATE TABLE banner_position
 (
     id integer PRIMARY KEY AUTOINCREMENT,
-    position_id int NOT NULL,
-    banner_id int NOT NULL
+    banner_id int NOT NULL,
+    position_id int NOT NULL
 );
 CREATE TABLE position
 (
     id integer PRIMARY KEY AUTOINCREMENT,
-    hash varchar NOT NULL,
     user_id int,
+    hash varchar NOT NULL,
     site varchar
+);
+CREATE TABLE campaign
+(
+    id integer PRIMARY KEY AUTOINCREMENT,
+    user_id int,
+    name varchar
 );
